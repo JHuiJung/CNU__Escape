@@ -1,4 +1,5 @@
 import pygame
+import time
 import random
 
 class Player(pygame.sprite.Sprite):
@@ -9,7 +10,7 @@ class Player(pygame.sprite.Sprite):
         self.playerHP = 3;
         
         # 플레이어 사진 불러오기
-        self.image = pygame.image.load('images/player/1.png')
+        self.image = pygame.image.load('images/player/nomal1.png')
         
         # 이미지 크기의 직사각형 모양 불러오기
         self.image = pygame.transform.scale(self.image, (88,96))
@@ -19,9 +20,34 @@ class Player(pygame.sprite.Sprite):
         # 이미지 시작 위치 설정
         self.rect.center = (100, 450)
     
+        #애니메이션용 리스트
+        self.nomalAnimation = [pygame.image.load('images/player/nomal1.png'),pygame.image.load('images/player/nomal2.png')\
+                              ,pygame.image.load('images/player/nomal3.png'),pygame.image.load('images/player/nomal4.png')\
+                              ,pygame.image.load('images/player/nomal5.png'),pygame.image.load('images/player/nomal6.png')\
+                              ,pygame.image.load('images/player/nomal7.png'),pygame.image.load('images/player/nomal8.png')\
+                              ,pygame.image.load('images/player/nomal9.png'),pygame.image.load('images/player/nomal10.png')\
+                              ,pygame.image.load('images/player/nomal11.png')]
+
+            
     #플레이어 상태 변경 멤버함수
     def setPlayerStatus(self,status = "nomal"):
         self.playerStatus = status
+        if status == "bow":
+            self.image = pygame.image.load('images/player/bow.png')
+            self.image = pygame.transform.scale(self.image, (88,48))
+            self.rect.center = (100,500)
+          
+        elif status == "defense":
+            self.image = pygame.image.load('images/player/defense.png')
+            self.image = pygame.transform.scale(self.image, (88,96))
+        elif status == "attack":
+            self.image = pygame.image.load('images/player/attack.png')
+            self.image = pygame.transform.scale(self.image, (120,96))
+        else:
+            self.rect.center = (100,450)
+            self.image = pygame.image.load('images/player/nomal1.png')
+            self.image = pygame.transform.scale(self.image, (88,96))
+    
 
 class Enemy(pygame.sprite.Sprite):
     # 플레이어 이미지 로딩 및 설정 함수
@@ -74,13 +100,16 @@ screen_width = 800 #가로 크기
 screen_height = 600 #세로 크기
 screen = pygame.display.set_mode((screen_width, screen_height))
 
-bg = pygame.image.load("images/BackGround_Test.png")
+bg = pygame.image.load("images/공대7호관.jpg")
+bg = pygame.transform.scale(bg, (screen_width,screen_height))
 
 #화면 타이틀 설정
 pygame.display.set_caption("CNU ESCAPE")
 
 
 counter, text = 30, '30'.rjust(3)
+nomalAnimatonCount =0
+
 pygame.time.set_timer(pygame.USEREVENT, 1000)
 font = pygame.font.SysFont('Consolas', 70)
 font2 = pygame.font.SysFont('Consolas', 50)
@@ -106,12 +135,20 @@ while play:
             else:
                 text = 'Boss!' 
                 e.setEnemySpeed(20)
+            
+            if counter == 15:
+                bg = pygame.image.load("images/시계탑.pngw")
+                bg = pygame.transform.scale(bg, (screen_width,screen_height))
+            elif counter == 0:
+                eeeeebg = pygame.image.load("images/후문.jpg")
+                bg = pygame.transform.scale(bg, (screen_width,screen_height))
                 
         #창 종료시 발상하는 이벤트
         if event.type == pygame.QUIT:
             play = False
         
         #캠 연동전 테스트용 이벤트 키보드Q = 엎드리기, 키보드W = 방어, 키보드E = 공격
+        
         keys = pygame.key.get_pressed()
         if keys[pygame.K_q]:
             p.setPlayerStatus("bow")
@@ -119,6 +156,11 @@ while play:
             p.setPlayerStatus("defense")
         elif keys[pygame.K_e]:
             p.setPlayerStatus("attack")
+        else:
+            p.setPlayerStatus("nomal")
+        
+        if event.type == pygame.KEYUP:
+            p.setPlayerStatus("nomal")
     
     #플레이어 체력 0되면 발생하는 이벤트
     if p.playerHP == 0: 
@@ -146,8 +188,13 @@ while play:
     screen.blit(e.image, e.rect)
     
     e.enemymove()
+    if p.playerStatus == "nomal":
+        if(nomalAnimatonCount >10): 
+            nomalAnimatonCount = 0
+        p.image = p.nomalAnimation[nomalAnimatonCount]
+        p.image = pygame.transform.scale(p.image, (88,96))
 
-        
+    nomalAnimatonCount +=1
     pygame.display.flip()
     clock.tick(60)
     
