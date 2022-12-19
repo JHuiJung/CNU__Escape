@@ -64,7 +64,6 @@ def show_Victory_screen():
     wait_for_key()
     play = False
 
-
 class Player(pygame.sprite.Sprite):
     # 플레이어 이미지 로딩 및 설정 함수
     def __init__(self):
