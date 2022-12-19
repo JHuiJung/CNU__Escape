@@ -263,6 +263,15 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
 
         if cv2.waitKey(10) & 0xFF == ord('q') or play == False:
             break
+
+        if exe == 1:
+            p.setPlayerStatus("defense")
+        elif exe ==2:
+            p.setPlayerStatus("attack")
+        elif exe == 3:    
+            p.setPlayerStatus("bow")
+        else:
+            p.setPlayerStatus("nomal")
         
         for event in pygame.event.get():
             #30초 카운트 관련 이벤트들
@@ -301,6 +310,8 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
             
             if event.type == pygame.KEYUP:
                 p.setPlayerStatus("nomal")
+
+            
             
         #플레이어 체력 0되면 발생하는 이벤트
         if p.playerHP == 0: 
